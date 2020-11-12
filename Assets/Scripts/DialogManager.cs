@@ -11,20 +11,17 @@ public class DialogManager : MonoBehaviour
     public GameObject dialogBox;
     public GameObject dialogImage;
 
-    //private string characterDialog = "Greetings Adventurer!";
-    private Queue<string> sentences;
     private string characterName;
 
     public TextMeshProUGUI dialogueText;
     public TextMeshProUGUI nameText;
-    
-
+ 
     // Start is called before the first frame update
     void Start()
     {
-        sentences = new Queue<string>();
-
         dialogBox.SetActive(false);
+        //subscribing the ondialogupdate function here to the onRobotsFixed Action from the EventSystem
+        GameEvents.current.onRobotsFixed += onDialogUpdate;
     }
 
     // Update is called once per frame
@@ -38,14 +35,7 @@ public class DialogManager : MonoBehaviour
         if (!dialog.convoStarted)
         {
             dialog.convoStarted = true;
-            sentences.Clear();
             nameText.text = dialog.characterName;
-
-            foreach (string sentence in dialog.sentences)
-            {
-                sentences.Enqueue(sentence);
-            }
-
             dialogImage.GetComponent<UnityEngine.UI.Image>().sprite = dialog.dialogSprite;
 
             DisplayNextSentence(dialog);
@@ -60,16 +50,23 @@ public class DialogManager : MonoBehaviour
     {
         if (!dialog.convoPaused)
         {
-            if (sentences.Count == 0)
+            if (dialog.sentencesIndex == dialog.sentences.Length)
             {
                 EndDialog();
                 dialog.convoStarted = false;
                 return;
             }
+
+            string sentence = dialog.sentences[dialog.sentencesIndex];
             dialogBox.SetActive(true);
-            string sentence = sentences.Dequeue();
+
             StopAllCoroutines();
             StartCoroutine(TypeSentence(sentence));
+            dialog.sentencesIndex += 1;
+        }
+        else
+        {
+            dialogBox.SetActive(false);
         }
     }
 
@@ -86,5 +83,10 @@ public class DialogManager : MonoBehaviour
     void EndDialog()
     {
         dialogBox.SetActive(false);
+    }
+
+    private void onDialogUpdate()
+    {
+        Debug.Log("you fixed the robots!");
     }
 }

@@ -11,6 +11,7 @@ public class CharacterDialog
     public Sprite dialogSprite;
     [TextArea (3,11)]
     public string[] sentences;
+    public int sentencesIndex;
     public bool convoStarted;
     public bool convoPaused;
 }

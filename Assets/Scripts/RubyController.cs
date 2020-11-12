@@ -146,15 +146,16 @@ public class RubyController : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.Raycast(rigidbody2d.position + Vector2.up * 0.2f, lookDirection, 1.5f, LayerMask.GetMask("NPC"));
 
+        //check if Ruby's raycast hit something in the NPC layer
         if (hit.collider != null)
         {
             DialogTrigger dialogTrigger = hit.collider.GetComponent<DialogTrigger>();
 
+            //check if the object in the NPC layer has a dialogTrigger component
             if (dialogTrigger != null)
             {
-                int count = dialogTrigger.characterDialog.sentences.Count();
-
-                FindObjectOfType<DialogManager>().StartDialog(dialogTrigger.characterDialog);             
+                //int count = dialogTrigger.characterDialog.sentences.Count();
+                FindObjectOfType<DialogManager>().StartDialog(dialogTrigger.characterDialog);                       
             }
         }
         else
